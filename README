@@ -1,0 +1,50 @@
+QUICKSTART
+
+0. REQUIREMENTS
+
+0.a. 	If you want local translations, you need to have Apertium installed on your server.
+	Otherwise, remote translations will be done.
+
+1. INSTALL
+
+1.a. Upload the 'wp-apertium' directory to 'plugins' directory.
+1.b. Log in WordPress and activate the plugin.
+
+
+2. CONFIGURE
+
+Edit inc/options.php to configure the plugin (language, target translations, content and title ID - see below).
+
+
+3. EDIT TEMPLATE
+
+To get translations placed in the right place, you have to wrap the post content and the post 
+title in an html tag, with the following ID
+
+	* Title: title-%s
+	* Content: entry-%s
+
+where %s is the post/page id number. (This can be overwritten on options.php). 
+
+In order to get post/page id number you can use a core Wordpress function: the_ID();
+As an example, you can write your title like:
+
+	<a id="title-<?php the_ID(); ?>" href="<?php echo get_permalink() ?>" rel="bookmark" ><?php the_title(); ?></a>
+
+
+And the content as follows:
+
+	<div id="entry-<?php the_ID(); ?>">
+	<?php
+		// the content itself!
+		the_content(__('Read the rest of this entry', 'mandigo') .' &raquo;');
+	?>
+	</div>
+
+4. TRANSLATION FUNCTION
+
+	<?php
+		if (function_exists('apertium_tranlations')) { 
+			apertium_tranlations($post->ID);
+		}
+	?>

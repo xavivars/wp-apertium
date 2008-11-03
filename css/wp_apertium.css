@@ -1,0 +1,63 @@
+div#apertium_content {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+div.languages {
+	text-align: right;
+}
+
+div.apertiumNote {
+	background-color: #eeeeee;
+	color: #696969;
+	text-align: center;
+	font-size: 0.9em;
+}
+
+div.hidden {
+	display: none;
+}
+
+div.apertiumNote a {
+	display: inline;
+	text-decoration: underline;
+}
+
+div.languages div#showListButton {
+	display: inline;
+	padding: 3px;
+	background-color: #eeeeee;
+	color: #696969;
+	cursor: pointer;
+	text-align: right;
+	font-size: 0.9em;
+}
+
+div.unselectedLang {
+	display: inline;
+	padding: 3px;
+	background-color: #eeeeee;
+	color: #696969;
+	cursor: pointer;
+	text-align: center;
+	font-size: 0.9em;
+}
+
+div.selectedLang {
+	display: inline;
+	padding: 3px;
+	background-color: #696969;
+	color: #ffffff;
+	cursor: pointer;
+	text-align: center;
+	font-size: 0.9em;
+}
+
+span.unknownWord {
+	color: Red;
+}
+
+span.unknownWord a:hover {
+	color: #ffffff;
+	background-color: Red;
+}

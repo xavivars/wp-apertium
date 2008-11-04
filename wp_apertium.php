@@ -375,10 +375,12 @@ if (!class_exists('WP_Apertium') && class_exists('WPlize')) {
                         $content = get_the_content();
                         $content = apply_filters('the_content', $content);
                         $content = str_replace('&#8217;',"'",$content);
+                        $content = str_replace('’',"'",$content);
                         $this->create_cache($cache_folder,$this->language,'.content',$content);
                         
                         $title = get_the_title();
                         $title = str_replace('&#8217;',"'",$title);
+                        $title = str_replace('’',"'",$title);
                         $this->create_cache($cache_folder,$this->language,'.title',$title);
 		}
 

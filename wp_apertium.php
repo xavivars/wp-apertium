@@ -456,7 +456,8 @@ if (!class_exists('WP_Apertium') && class_exists('WPlize')) {
 				if(file_exists($cache_folder) && is_dir($cache_folder)) {
 				    if ($gd = opendir($cache_folder)) {
 					while (($fic = readdir($gd)) !== false) {
-						unlink($fic);
+						if(($fic != '.')&&($fic != '..')))
+							unlink($cache_folder.$fic);
 					}
 					closedir($gd);
 					rmdir($cache_folder);
@@ -505,7 +506,7 @@ if (isset($wp_apertium)) {
 
 	//Actions
 	add_action('wp_head', array(&$wp_apertium, 'add_header_code'));
-	add_action('save_post', array(&$wp_apertium, 'save_post_cache'));
+	add_action('save_post', array(&$wp_apertium, 'save_post'));
 	//Filters
 
 	// Hooks

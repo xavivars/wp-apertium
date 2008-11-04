@@ -374,15 +374,28 @@ if (!class_exists('WP_Apertium') && class_exists('WPlize')) {
 		function original_cache($cache_folder) {
                         $content = get_the_content();
                         $content = apply_filters('the_content', $content);
-                        $content = str_replace('&#8217;',"'",$content);
-                        $content = str_replace('’',"'",$content);
+			$content = $this->apos($content);
                         $this->create_cache($cache_folder,$this->language,'.content',$content);
                         
                         $title = get_the_title();
-                        $title = str_replace('&#8217;',"'",$title);
-                        $title = str_replace('’',"'",$title);
+			$title = $this->apos($title);
                         $this->create_cache($cache_folder,$this->language,'.title',$title);
 		}
+
+		/**
+		*
+		* Replaces apostrophes
+		*
+		**/
+		function apos($text) {
+			$text = str_replace('&#8217;',"'",$text);
+			$text = str_replace('&raquo;',"'",$text);
+			$text = str_replace('&#39;',"'",$text);
+			$text = str_replace('&apos;',"'",$text);
+			$text = str_replace('’',"'",$text);
+
+			return text;
+		}		
 
 		/**
 		*

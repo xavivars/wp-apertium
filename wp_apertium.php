@@ -64,6 +64,19 @@ if(!function_exists('plugins_url')) {
 	}
 }
 
+if(!function_exists('is_ssl')) {
+	/**
+	* Determine if SSL is used.
+	*
+	* @since 2.6
+	*
+	* @return bool True if SSL, false if not used.
+	*/
+	function is_ssl() {
+		return ( isset($_SERVER['HTTPS']) && 'on' == strtolower($_SERVER['HTTPS']) ) ? true : false; 
+	}
+
+}
 
 	class WP_Apertium {
 

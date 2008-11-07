@@ -512,7 +512,7 @@ if(!function_exists('is_ssl')) {
 				if(file_exists($cache_folder) && is_dir($cache_folder)) {
 				    if ($gd = opendir($cache_folder)) {
 					while (($fic = readdir($gd)) !== false) {
-						if(($fic != '.')&&($fic != '..')))
+						if(($fic != '.')&&($fic != '..'))
 							unlink($cache_folder.$fic);
 					}
 					closedir($gd);

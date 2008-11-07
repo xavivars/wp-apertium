@@ -488,7 +488,7 @@ if(!function_exists('is_ssl')) {
 		* Translates a text in a local install
 		*
 		**/
-		function apertium_translate_local($file, $dir, $markUnknown) {
+		function translate_local($file, $dir, $markUnknown) {
 			
 			$unknown=($markUnknown)?" -u ":"";
 			$dir = $this->language.'-'.$dir;

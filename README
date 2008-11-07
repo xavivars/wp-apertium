@@ -44,7 +44,7 @@ And the content as follows:
 4. TRANSLATION FUNCTION
 
 	<?php
-		if (function_exists('apertium_tranlations')) { 
+		if (function_exists('apertium_translations')) { 
 			apertium_tranlations($post->ID);
 		}
 	?>

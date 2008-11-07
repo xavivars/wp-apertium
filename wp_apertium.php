@@ -435,7 +435,7 @@ if(!function_exists('is_ssl')) {
 			$text = str_replace('&apos;',"'",$text);
 			$text = str_replace('’',"'",$text);
 
-			return text;
+			return $text;
 		}		
 
 		/**

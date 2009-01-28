@@ -43,6 +43,7 @@ if(typeof(WP_Apertium) == 'undefined')
         this.currentLanguages = Array();
         this.otherLanguages = Array();
         this.ajax = false;
+        this.tmp_var = 0;
 
 		function _translate(langCode, listOfCodes, id) {
 			this.unselectButtons(id);
@@ -126,7 +127,11 @@ if(typeof(WP_Apertium) == 'undefined')
                 if(wp_apertium.currentLanguages[aux_id]=='')
                     wp_apertium.currentLanguages[aux_id] = wp_apertium.defaultLanguages[aux_id];
                 wp_apertium.otherLanguages[aux_id] = jQuery.trim(jQuery('#apertium_other_languages-'+aux_id).html());
+                if((wp_apertium.currentLanguages[aux_id]) == (wp_apertium.defaultLanguages[aux_id])) {
+                    wp_apertium.hideLanguages(wp_apertium.otherLanguages[aux_id],aux_id);
+                }
             });
+            
         }
 
         function _init() {

@@ -117,6 +117,7 @@ if(!function_exists('is_ssl')) {
 			$this->post_translations = array();
             $this->print_js = false;
             $this->ajax = false;
+		$this->loaded=array();
 		}
 		
 		/**
@@ -397,8 +398,8 @@ if(!function_exists('is_ssl')) {
 		*
 		**/
 		function get_translations($id) {
-            if($this->loaded)
-                return $this->loaded;
+            if($this->loaded[$id])
+                return $this->loaded[$id];
 
 			$this->post_id = $id;
 			$ret = false;
@@ -441,10 +442,10 @@ if(!function_exists('is_ssl')) {
 					}
 				}
 
-				$this->loaded=$this->load_translations($cache_folder);
+				$this->loaded[$id]=$this->load_translations($cache_folder);
 			}
 
-			return $this->loaded;
+			return $this->loaded[$id];
 		}	
 
 		/**

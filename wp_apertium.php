@@ -298,24 +298,27 @@ if(!function_exists('is_ssl')) {
 			$codeStr = $this->options->get_option('translation_languages');	
 			$code = $this->language;
 			$name = $this->get_name($code);
+            $current = $this->current_language;
 
+            $css = (($current==$code)?'selectedLang':'unselectedLang');
 			?>	
 
-			<div id="translateButton-<?=$id?>" class="languages">
+			<div id="translateButton-<?=$id?>" class="languages hidden">
 				<div id="showListButton" onclick="apertium.showLanguages('<?=$id?>');"><?=$this->get_name('translate')?></div>
 			</div>
 	
-			<div id="listOfLanguages-<?=$id?>" class="languages hidden">
-				<div 	id="<?=$code?>-button-<?=$id?>" class="unselectedLang" 
+			<div id="listOfLanguages-<?=$id?>" class="languages">
+				<div 	id="<?=$code?>-button-<?=$id?>" class="<?=$css?>"
 					onclick="apertium.translate('<?=$code?>','<?=$codeStr?>','<?=$id?>');" 
 					title="<?=$name?>">
 					<?=$code?>
 				</div>
 
 			<?php
-			foreach ($this->translation_languages as $code) { ?>
+			foreach ($this->translation_languages as $code) {
+                $css = (($current==$code)?'selectedLang':'unselectedLang'); ?>
 
-				<div 	id="<?=$code?>-button-<?=$id?>" class="unselectedLang" 
+				<div 	id="<?=$code?>-button-<?=$id?>" class="<?=$css?>"
 					onclick="apertium.translate('<?=$code?>','<?=$codeStr?>','<?=$id?>');" 
 					title="<?=$this->get_name($code)?>">
 					<?=$code?>
@@ -344,8 +347,9 @@ if(!function_exists('is_ssl')) {
             </div>
             <?php
             foreach ($this->translation_languages as $lang) {
-			?>
-				<div id="<?=$lang?>-note-<?=$id?>" class="apertiumNote hidden">
+                $css = (($current==$lang)?'':'hidden');
+            ?>
+				<div id="<?=$lang?>-note-<?=$id?>" class="apertiumNote <?=$css?>">
 					<?=$this->get_name('poweredby')?>
 					<a href="http://xavi.infobenissa.com/utilitats/wp-apertium/" title="WP-Apertium">WP-Apertium</a>.
 					<?=$this->get_name('translatedto')?> <b><?=$this->get_name($lang)?></b>
@@ -680,7 +684,7 @@ if(!function_exists('is_ssl')) {
 if (class_exists("WP_Apertium")) {
 	$wp_apertium = new WP_Apertium();
 
-	function apertium_translations($id) {
+	function apertium_old_translations($id) {
 		global $wp_apertium;
         if(isset($_GET['lang']))
             $wp_apertium->set_current_lang(attribute_escape($_GET['lang']));
@@ -688,10 +692,10 @@ if (class_exists("WP_Apertium")) {
 
 	}
 
-    function apertium_ajax_translations($id) {
+    function apertium_translations($id) {
         global $wp_apertium;
         $wp_apertium->set_ajax();
-        apertium_translations($id);
+        apertium_old_translations($id);
     }
 
     function apertium_get_the_content() {

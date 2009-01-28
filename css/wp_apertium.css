@@ -12,6 +12,8 @@ div.apertiumNote {
 	color: #696969;
 	text-align: center;
 	font-size: 0.9em;
+    margin-top: 3px;
+    margin-bottom: 3px;
 }
 
 div.hidden {

@@ -692,6 +692,13 @@ if (class_exists("WP_Apertium")) {
 
 	}
 
+    function apertium_preload($id) {
+        global $wp_apertium;
+        if(isset($_GET['lang']))
+            $wp_apertium->set_current_lang(attribute_escape($_GET['lang']));
+        $wp_apertium->get_translations($id);
+    }
+
     function apertium_translations($id) {
         global $wp_apertium;
         $wp_apertium->set_ajax();

@@ -108,7 +108,7 @@ if(typeof(WP_Apertium) == 'undefined')
 
                 /**** FALLBACK. THIS IS NOT ALWAYS NEEEDED. WHY???? ****/
                 if(txt == null)
-                    this.innerHTML;
+                    txt=this.innerHTML;
 
                 if(typeof apertium.translations[aux_id] == 'undefined')
                     wp_apertium.translations[aux_id] = Array();

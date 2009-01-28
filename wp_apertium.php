@@ -89,6 +89,10 @@ if(!function_exists('is_ssl')) {
 		var $translation_languages;
 		var $local;
 		var $path;
+        var $print_js;
+        var $ajax;
+        var $loaded;
+        var $current_language;
 
 		// Translation vars
 		var $post_id;
@@ -109,7 +113,10 @@ if(!function_exists('is_ssl')) {
 			$this->path = $this->options->get_option('path');
 			$this->translation_languages = split(',',$this->options->get_option('translation_languages'));
 			$this->language = $this->options->get_option('language');
+            $this->current_language = $this->language;
 			$this->post_translations = array();
+            $this->print_js = false;
+            $this->ajax = false;
 		}
 		
 		/**
@@ -162,6 +169,7 @@ if(!function_exists('is_ssl')) {
 			if(!file_exists($this->cache_dir)) {
 				mkdir($this->cache_dir,0777);
 			}
+            $this->local = true;
 			$this->test_local();
 
 			$aux = $this->options->get_option('title_id');
@@ -180,6 +188,10 @@ if(!function_exists('is_ssl')) {
 			if(empty($aux))
 				$this->options->update_option('translation_languages','es,fr,en');
 
+			$aux = $this->options->get_option('path');
+			if(empty($aux))
+				$this->options->update_option('path','apertium');
+
 		}
 
 		/**
@@ -191,6 +203,13 @@ if(!function_exists('is_ssl')) {
 
 		}
 
+        /**
+         * Enables AJAX mode
+         */
+        function set_ajax() {
+            $this->ajax = true;
+        }
+
 		/**
 		*
 		* Tests if there's an available local install of apertium
@@ -201,7 +220,9 @@ if(!function_exists('is_ssl')) {
 			if ($this->local) {
 				$ap_path = $this->path;
 
-				if(empty($ap_path)) $ap_path = 'apertium';
+				if(empty($ap_path)) {
+                    $ap_path = 'apertium';
+                }
 	
 				if(function_exists('system'))
 					@system($ap_path.' > /dev/null 2>&1',$ret);
@@ -211,12 +232,22 @@ if(!function_exists('is_ssl')) {
 				if($ret == 127) {
 					$this->local = false;
 					$this->options->update_option('local',false);
-				}
+				} else {
+                    $this->options->update_option('local',true);
+                    $this->path = $ap_path;
+                }
 			}
 	
 			return $this->local;
 		}
 
+
+        function printed_js() {
+            $ret = $this->print_js;
+            $this->print_js = true;
+
+            return $ret;
+        }
 
 		/**
 		*
@@ -225,11 +256,34 @@ if(!function_exists('is_ssl')) {
 		*
 		**/
 		function translations($id) {
+            if(!$this->printed_js()) {
+                if($this->ajax) {
+                    echo '
+                    <script type="text/javascript">
+                        jQuery(document).ready( function () {
+                            apertium = new WPApertium();
+                            apertium.setAjax();
+                            apertium.init();
+                        });
+                    </script>';
+                } else {
+                    echo '
+                    <script type="text/javascript">
+                        jQuery(document).ready( function () {
+                            apertium = new WPApertium();
+                            apertium.init();
+                        });
+                    </script>';
+                }
+            }
+
+
 			if($this->get_translations($id))
 			{
-				echo '<div id="apertium_content-'.$id.'">';
+				echo '<div id="apertium_content-'.$id.'" class="apertium_content">';
 				$this->print_menu($id);
-				$this->print_translations($id);
+                if(!$this->ajax)
+    				$this->print_translations($id);
 				echo '</div>';
 			}
 		}
@@ -271,39 +325,63 @@ if(!function_exists('is_ssl')) {
 
 				<div class="unselectedLang" onclick="apertium.hideLanguages('<?=$codeStr?>','<?=$id?>');">&raquo;</div>
 			</div>
+            <div id="apertium_default_language-<?=$id?>" class="apertium_default_language hidden">
+                <?=$this->language?>
+            </div>
 
-			<?php 
+                <?php
+                    if($this->current_language != $this->language) {
+                ?>
+            <div id="apertium_current_language-<?=$id?>" class="apertium_current_language hidden">
+                <?=$this->current_language?>
+            </div>
+                <?php
+                    }
+                ?>
+
+            <div id="apertium_other_languages-<?=$id?>" class="apertium_other_languages hidden">
+                <?=$this->options->get_option('translation_languages')?>
+            </div>
+            <?php
+            foreach ($this->translation_languages as $lang) {
+			?>
+				<div id="<?=$lang?>-note-<?=$id?>" class="apertiumNote hidden">
+					<?=$this->get_name('poweredby')?>
+					<a href="http://xavi.infobenissa.com/utilitats/wp-apertium/" title="WP-Apertium">WP-Apertium</a>.
+					<?=$this->get_name('translatedto')?> <b><?=$this->get_name($lang)?></b>
+					<?=$this->get_name('translatedby')?> <a href="http://www.apertium.org">Apertium</a>
+				</div>
+
+			<?php
+            }
 		}
 
 		/**
 		*
-		* Prints translation languages
+		* Prints translation languages menu
 		*
 		**/
 		function print_translations($id) {
 
+            if($this->ajax)
+                $elem = 'text';
+            else
+                $elem = 'div'
 			?>
-	
-			<div xml:lang="<?=$this->language?>" id="<?=$this->language?>-content-<?=$id?>" class="hidden"><?=$this->post_translations[$this->language]['content']?></div>
-			<div xml:lang="<?=$this->language?>" id="<?=$this->language?>-title-<?=$id?>" class="hidden"><?=$this->post_translations[$this->language]['title']?></div>
+			<<?=$elem?> xml:lang="<?=$this->language?>" id="<?=$this->language?>-content-<?=$id?>" class="apertium_text hidden"><?=$this->post_translations[$this->language]['content']?></<?=$elem?>>
+			<<?=$elem?> xml:lang="<?=$this->language?>" id="<?=$this->language?>-title-<?=$id?>" class="apertium_text hidden"><?=$this->post_translations[$this->language]['title']?></<?=$elem?>>
 
 			<?php
 		
 			foreach ($this->translation_languages as $lang) {
 			
 			?>
-				<div id="<?=$lang?>-note-<?=$id?>" class="apertiumNote hidden">
-					<?=$this->get_name('poweredby')?> 
-					<a href="http://xavi.infobenissa.com/utilitats/wp-apertium/" title="WP-Apertium">WP-Apertium</a>.
-					<?=$this->get_name('translatedto')?> <b><?=$this->get_name($lang)?></b> 
-					<?=$this->get_name('translatedby')?> <a href="http://www.apertium.org">Apertium</a>
-				</div>
-				<div xml:lang="<?=$lang?>" id="<?=$lang?>-content-<?=$id?>" class="hidden">
+				<<?=$elem?> xml:lang="<?=$lang?>" id="<?=$lang?>-content-<?=$id?>" class="apertium_text hidden">
 					<?=$this->post_translations[$lang]['content']?>
-				</div>
-				<div xml:lang="<?=$lang?>" id="<?=$lang?>-title-<?=$id?>" class="hidden">
+				</<?=$elem?>>
+				<<?=$elem?> xml:lang="<?=$lang?>" id="<?=$lang?>-title-<?=$id?>" class="apertium_text hidden">
 					<?=$this->post_translations[$lang]['title']?>
-				</div>	
+				</<?=$elem?>>
 			<?php	
 			}
 		}
@@ -315,6 +393,9 @@ if(!function_exists('is_ssl')) {
 		*
 		**/
 		function get_translations($id) {
+            if($this->loaded)
+                return $this->loaded;
+
 			$this->post_id = $id;
 			$ret = false;
 
@@ -333,7 +414,7 @@ if(!function_exists('is_ssl')) {
 				}
 
 				// crear cache idioma local
-				$this->original_cache($cache_folder);
+				$this->original_cache($cache_folder,$id);
 
 				foreach($this->translation_languages as $lang) {
 					if($lang != $this->language) {
@@ -346,7 +427,6 @@ if(!function_exists('is_ssl')) {
 						if(!file_exists($content_file)) {
 							
 							$result = $this->translate($content_original,$lang);
-
 							$this->create_cache($cache_folder,$lang,'.content',$result);
 
 							$result = $this->translate($title_original,$lang);
@@ -357,10 +437,10 @@ if(!function_exists('is_ssl')) {
 					}
 				}
 
-				$ret=$this->load_translations($cache_folder);
+				$this->loaded=$this->load_translations($cache_folder);
 			}
 
-			return $ret;
+			return $this->loaded;
 		}	
 
 		/**
@@ -412,15 +492,37 @@ if(!function_exists('is_ssl')) {
 		* Creates original cache files
 		*
 		**/
-		function original_cache($cache_folder) {
-                        $content = get_the_content();
-                        $content = apply_filters('the_content', $content);
-			$content = $this->apos($content);
-                        $this->create_cache($cache_folder,$this->language,'.content',$content);
-                        
+		function original_cache($cache_folder,$id) {
+            $found = false;
+            if($this->ajax) {
+                
+                $my_query = new WP_Query('p='.$id);
+                while ($my_query->have_posts()) : $my_query->the_post();
+                    $found = true;
+                    $title = get_the_title();
+                    $content = get_the_content();
+                endwhile;
+
+                if(!$found) {
+                    $my_query = new WP_Query('page_id='.$id);
+                    while ($my_query->have_posts()) : $my_query->the_post();
+                        $found = true;
                         $title = get_the_title();
+                        $content = get_the_content();
+                    endwhile;
+                }
+            } else {
+                $found = true;
+                $content = get_the_content();
+                $title = get_the_title();
+            }
+
+            $content = apply_filters('the_content', $content);
+			$content = $this->apos($content);
+            $this->create_cache($cache_folder,$this->language,'.content',$content);
+                        
 			$title = $this->apos($title);
-                        $this->create_cache($cache_folder,$this->language,'.title',$title);
+            $this->create_cache($cache_folder,$this->language,'.title',$title);
 		}
 
 		/**
@@ -522,6 +624,43 @@ if(!function_exists('is_ssl')) {
 			}
 		}
 
+        /**
+         *
+         * Converts de default post language to another
+         *
+         */
+        function set_current_lang($lang) {
+            if(in_array($lang, $this->translation_languages))
+            {
+                $this->current_language = $lang;
+            }
+        }
+
+        /**
+         *
+         * get_the_content wrapper
+         *
+         */
+        function get_the_content() {
+            return $this->get_the_X('content');
+        }
+
+        /**
+         * get_the_title wrapper
+         */
+        function get_the_title() {
+            return $this->get_the_X('title');
+        }
+
+        /**
+         *
+         * get_the_X wrapper
+         *
+         */
+        function get_the_X($str) {
+            return $this->post_translations[$this->current_language][$str];
+        }
+
 		/**
 		*
 		* Adds a Header in the <head> html tag
@@ -543,9 +682,32 @@ if (class_exists("WP_Apertium")) {
 
 	function apertium_translations($id) {
 		global $wp_apertium;
+        if(isset($_GET['lang']))
+            $wp_apertium->set_current_lang(attribute_escape($_GET['lang']));
 		$wp_apertium->translations($id);
+
 	}
 
+    function apertium_ajax_translations($id) {
+        global $wp_apertium;
+        $wp_apertium->set_ajax();
+        apertium_translations($id);
+    }
+
+    function apertium_get_the_content() {
+        global $wp_apertium;
+        return $wp_apertium->get_the_content();
+    }
+
+    function apertium_get_the_title() {
+        global $wp_apertium;
+        return $wp_apertium->get_the_title();
+    }
+
+    function apertium_get_the_X($str) {
+        global $wp_apertium;
+        return $wp_apertium->get_the_X($str);
+    }
 
 	// backward compatibility with apertium-blog-translation
 	if (!function_exists('apertiumPostTranslation')) { 

@@ -106,6 +106,10 @@ if(typeof(WP_Apertium) == 'undefined')
                 aux_lang=aux_all[0];aux_text=aux_all[1];aux_id=aux_all[2];
                 txt = jQuery('#'+aux_lang+'-'+aux_text+'-'+aux_id,xml).html();
 
+                /**** FALLBACK. THIS IS NOT ALWAYS NEEEDED. WHY???? ****/
+                if(txt == null)
+                    this.innerHTML;
+
                 if(typeof apertium.translations[aux_id] == 'undefined')
                     wp_apertium.translations[aux_id] = Array();
 

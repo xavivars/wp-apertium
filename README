@@ -2,7 +2,8 @@ QUICKSTART
 
 0. REQUIREMENTS
 
-0.a. 	If you want local translations, you need to have Apertium installed on your server.
+0.a.
+    If you want local translations, you need to have Apertium installed on your server.
 	Otherwise, remote translations will be done.
 
 1. INSTALL
@@ -29,22 +30,62 @@ where %s is the post/page id number. (This can be overwritten on options.php).
 In order to get post/page id number you can use a core Wordpress function: the_ID();
 As an example, you can write your title like:
 
-	<a id="title-<?php the_ID(); ?>" href="<?php echo get_permalink() ?>" rel="bookmark" ><?php the_title(); ?></a>
-
+	<a id="title-<?php the_ID(); ?>" href="<?php echo get_permalink() ?>" rel="bookmark" >
+        <?php the_title(); ?>
+    </a>
 
 And the content as follows:
 
 	<div id="entry-<?php the_ID(); ?>">
 	<?php
 		// the content itself!
-		the_content(__('Read the rest of this entry', 'mandigo') .' &raquo;');
+		the_content(__('Read the rest of this entry') .' &raquo;');
 	?>
 	</div>
 
 4. TRANSLATION FUNCTION
 
+   There are three ways to get post translated.
+
+   The first one, existing on versions previous to 0.9, writes translated text in
+   the source code of the web page, and uses Javascript to show/hide each text.
+
+   The second one uses AJAX to retrieve translations. It has the benefit that no
+   duplicated html ID are found on source code, and also works well with Google
+   AdSense. This will be the "official" method used from now. Old method will
+   still be supported on some versions.
+
+   The third one (that can be merged with one of the previous) adds non-Javascript
+   support to wp-apertium. You can get a translation using a URL variable:
+        www.example.com -> your web page
+        www.example.com/?lang=fr -> french version of your webpage
+
+   The function must be invoqued just before the post is displayed, inside the
+   loop.
+
+4a. AJAX MODE
+
 	<?php
 		if (function_exists('apertium_translations')) { 
 			apertium_tranlations($post->ID);
-		}
+            $content = apertium_get_the_content();
+            $title = apertium_get_the_title();
+		} else {
+            $content = get_the_content();
+            $title = get_the_title();
+        }
+	?>
+
+4b. OLD MODE
+
+	<?php
+		if (function_exists('apertium_old_translations')) {
+			apertium_old_tranlations($post->ID);
+            $content = apertium_get_the_content();
+            $title = apertium_get_the_title();
+		} else {
+            $content = get_the_content();
+            $title = get_the_title();
+        }
+
 	?>

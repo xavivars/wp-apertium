@@ -573,7 +573,7 @@ if(!function_exists('is_ssl')) {
 			$submit_url = "http://www.apertium.org/common/traddoc.php";
 
 			$formvars = array("direction"=> $this->language.'-'.$dir);
-			$fomvars['mark']=($markUnknown)?"1":"0";
+			$formvars['mark']=($markUnknown)?"1":"0";
 			$formvars['doctype'] = "html";
 			$formvars['userfile'] = "@$file"; // "@" causes cURL to send as file and not string (I believe)
 

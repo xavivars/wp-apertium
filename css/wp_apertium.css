@@ -35,7 +35,7 @@ div.languages div#showListButton {
 	font-size: 0.9em;
 }
 
-div.unselectedLang {
+.unselectedLang {
 	display: inline;
 	padding: 3px;
 	background-color: #eeeeee;
@@ -43,9 +43,10 @@ div.unselectedLang {
 	cursor: pointer;
 	text-align: center;
 	font-size: 0.9em;
+	text-decoration: none;
 }
 
-div.selectedLang {
+.selectedLang {
 	display: inline;
 	padding: 3px;
 	background-color: #696969;
@@ -53,6 +54,7 @@ div.selectedLang {
 	cursor: pointer;
 	text-align: center;
 	font-size: 0.9em;
+	text-decoration: none;
 }
 
 span.unknownWord {

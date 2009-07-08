@@ -28,6 +28,7 @@ if(typeof(WP_Apertium) == 'undefined')
         this.path = '<?=$wp_apertium_path?>';
 		this.translate = _translate;
 		this.unselectButtons = _unselectButtons;
+		this.removeLinks = _removeLinks;
 		this.showLanguages = _showLanguages;
 		this.hideNotes = _hideNotes;
 		this.hideLanguages = _hideLanguages;
@@ -57,6 +58,10 @@ if(typeof(WP_Apertium) == 'undefined')
 
 		function _unselectButtons(id) {
 			jQuery.each(jQuery('#listOfLanguages-'+id).children() ,function () {	this.className= 'unselectedLang'; });
+		}
+
+		function _removeLinks(id) {
+			jQuery.each(jQuery('#listOfLanguages-'+id).children() ,function () {	jQuery(this).removeAttr("href")})
 		}
 
 		function _showLanguages(id) {
@@ -126,6 +131,7 @@ if(typeof(WP_Apertium) == 'undefined')
         function _loadMetaData() {
             jQuery('.apertium_default_language').each(function (i) {
                 aux_id=this.id.split('-')[1];
+				wp_apertium.removeLinks(aux_id);
                 wp_apertium.defaultLanguages[aux_id] = jQuery.trim(jQuery('#apertium_default_language-'+aux_id).html());
                 wp_apertium.currentLanguages[aux_id] = jQuery.trim(jQuery('#apertium_current_language-'+aux_id).html());
                 if(wp_apertium.currentLanguages[aux_id]=='')

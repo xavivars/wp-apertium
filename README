@@ -51,9 +51,8 @@ And the content as follows:
    the source code of the web page, and uses Javascript to show/hide each text.
 
    The second one uses AJAX to retrieve translations. It has the benefit that no
-   duplicated html ID are found on source code, and also works well with Google
-   AdSense. This will be the "official" method used from now. Old method will
-   still be supported on some versions.
+   duplicated html ID are found on source code. This will be the "official" method 
+   used from now. Old method will still be supported on some versions.
 
    The third one (that can be merged with one of the previous) adds non-Javascript
    support to wp-apertium. You can get a translation using a URL variable:

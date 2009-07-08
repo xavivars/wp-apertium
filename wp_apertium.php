@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP-Apertium
-Version: 0.8
+Version: 0.9
 Plugin URI: http://xavi.infobenissa.com/utilitats/wp-apertium
 Author: Xavier Ivars i Ribes
 Author URI: http://xavi.infobenissa.com
@@ -28,6 +28,8 @@ Description: Apertium MT into Wordpress
 */
 /* 
 	Changelog
+	2009-07-08
+		- Version 0.9: Added AJAX mode
 	2008-10-31
 		- Version 0.8: First release	
 */
@@ -309,21 +311,21 @@ if(!function_exists('is_ssl')) {
 			</div>
 	
 			<div id="listOfLanguages-<?=$id?>" class="languages">
-				<div 	id="<?=$code?>-button-<?=$id?>" class="<?=$css?>"
+				<a 	id="<?=$code?>-button-<?=$id?>" class="<?=$css?>"
 					onclick="apertium.translate('<?=$code?>','<?=$codeStr?>','<?=$id?>');" 
-					title="<?=$name?>">
+					title="<?=$name?>" href="?lang=<?=$current?>">
 					<?=$code?>
-				</div>
+				</a>
 
 			<?php
 			foreach ($this->translation_languages as $code) {
                 $css = (($current==$code)?'selectedLang':'unselectedLang'); ?>
 
-				<div 	id="<?=$code?>-button-<?=$id?>" class="<?=$css?>"
+				<a 	id="<?=$code?>-button-<?=$id?>" class="<?=$css?>"
 					onclick="apertium.translate('<?=$code?>','<?=$codeStr?>','<?=$id?>');" 
-					title="<?=$this->get_name($code)?>">
+					title="<?=$this->get_name($code)?>" href="?lang=<?=$code?>">
 					<?=$code?>
-				</div>
+				</a>
 
 			<?php } ?>
 

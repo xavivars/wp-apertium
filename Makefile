@@ -1,4 +1,4 @@
-VERSION=0.8
+VERSION=0.9
 
 FILES=wp_apertium.php css js inc README COPYING AUTHORS
 all: dist
